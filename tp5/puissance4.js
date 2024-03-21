@@ -4,18 +4,14 @@ class Puissance4{
     #dernierCoup;
 
     constructor(){
-        this.#board = [];
+        this.#board = new Array(6).fill().map(() => new Array(7).fill(undefined));
         this.#currentPlayer = 'A';
-        for (let index = 0; index < 6; index++) {
-            this.#board.push(new Array(7))
-        }
-        console.table(this.#board);
     }
 
     play(column){
         let isPlay = false
         let i=5;
-        while (this.#board[i][column] !== undefined && i>=0) {
+        while (i>=0 && this.#board[i][column] !== undefined ) {
             i--;
         }
         if (i !== -1) {
@@ -25,10 +21,10 @@ class Puissance4{
             this.nextPlayer()
         }
         console.table(this.#board)
-        console.log("isWin : "+this.isWin());
         return isPlay
 
     }
+    
     nextPlayer(){
         if (this.#currentPlayer === 'A') {
             this.#currentPlayer = 'B'
@@ -43,66 +39,111 @@ class Puissance4{
     }
 
     isWin(){
-        
-        let ligneDernierCoup = console.log(this.#dernierCoup[0]);
-        let colonneDernierCoup = console.log(this.#dernierCoup[1]);
-        let win = true;
-        //ligne droite
-        for (let i = 1; i <= 4; i++) {
-            if (this.#board[ligneDernierCoup][colonneDernierCoup] !== this.#board[ligne+i][column]){
-                win = false;
-            }
-        }
-        return win
-        
-        
-        /*let cmpt = 1
-        let win = false
-        // vérifie les victoires en ligne
-        this.#board.forEach(ligne => {
-            for (let index = 0; index < ligne.length-1; index++) {
-                if (ligne[index] === ligne[index+1] && ligne[index] !== undefined){
+        let ligneDernierCoup = this.#dernierCoup[0];
+        let colonneDernierCoup = this.#dernierCoup[1];
+        let win = false;
+        let sensVerif = this.getSensVerif();
+        let Cx, Cy;
+        sensVerif.forEach(tabSens => {
+            let cmpt = 0
+            for (let i = 1; i < 4; i++) {
+                    Cx = Math.floor(eval(ligneDernierCoup+tabSens[0]+i))
+                    Cy = Math.floor(eval(colonneDernierCoup+tabSens[1]+i))
+                if (Cx >= 0 && Cy >= 0 && Cx < 6 && Cy < 7 && this.#board[ligneDernierCoup][colonneDernierCoup] === this.#board[Cx][Cy] && this.#board[ligneDernierCoup][colonneDernierCoup] !== undefined ){
                     cmpt++;
                 }
-                else{
-                    cmpt = 1;
-                }
-                if (cmpt === 4){
+                if (cmpt === 3) {
                     win = true
                 }
-            }
-        })
-        // vérifie les victoires en colonne
-        for (let column=0; column<this.#board[0].length; column++){
-            for (let ligne=0; ligne<this.#board.length-1; ligne++){
-                if (this.#board[ligne][column] === this.#board[ligne+1][column] && this.#board[ligne][column] !== undefined){
-                    cmpt++;
-                }
-                else{
-                    cmpt = 1;
-                }
-                if (cmpt === 4){
-                    win = true
-                }
-                
-            }
-        }
-
-        // vérifie les victoires en diagonal
-
-
+            } 
+        });
         return win
-
-        */
     }
 
     isDraw(){
+        let isBoardFull = true
+        for (let ligne = 0; ligne < this.#board.length; ligne++) {
+            for (let colonne = 0; colonne < this.#board[0].length; colonne++) {
+                if (this.#board[ligne][colonne] === undefined) {
+                    isBoardFull = false
+                }
+            }
+        }
 
+        return (! this.isWin() && isBoardFull)
     }
 
     getBoard(){
+        return this.#board;
+    }
 
+    getSensVerif() {
+    
+        // Définir les symboles disponibles
+        var symboles = ["+", "-", "."];
+        
+        // Initialiser un tableau pour stocker toutes les paires possibles
+        var ensembleCouples = [];
+        
+        // Générer toutes les paires possibles
+        for (var i = 0; i < symboles.length; i++) {
+            for (var j = 0; j < symboles.length; j++) {
+                ensembleCouples.push([symboles[i], symboles[j]]);
+            }
+        }
+        ensembleCouples.pop()
+    
+        return ensembleCouples
     }
 }
 
 let puissance4 = new Puissance4();
+console.table(puissance4.getBoard());
+puissance4.play(5)
+puissance4.play(5)
+puissance4.play(4)
+puissance4.play(4)
+puissance4.play(3)
+puissance4.play(3)
+puissance4.play(3)
+puissance4.play(3)
+puissance4.play(3)
+puissance4.play(3)
+puissance4.play(4)
+puissance4.play(4)
+puissance4.play(4)
+puissance4.play(5)
+puissance4.play(5)
+puissance4.play(5)
+puissance4.play(5)
+puissance4.play(6)
+puissance4.play(6)
+puissance4.play(6)
+puissance4.play(6)
+puissance4.play(6)
+puissance4.play(6)
+puissance4.play(4)
+puissance4.play(1)
+puissance4.play(2)
+puissance4.play(2)
+puissance4.play(2)
+puissance4.play(2)
+puissance4.play(2)
+puissance4.play(2)
+puissance4.play(1)
+puissance4.play(1)
+puissance4.play(1)
+puissance4.play(1)
+puissance4.play(1)
+puissance4.play(0)
+puissance4.play(0)
+puissance4.play(0)
+puissance4.play(0)
+puissance4.play(0)
+puissance4.play(0)
+
+
+
+console.log(puissance4.isWin());
+
+console.log(puissance4.isDraw());
