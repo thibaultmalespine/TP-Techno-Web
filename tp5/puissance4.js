@@ -1,4 +1,4 @@
-class Puissance4{
+export class Puissance4{
     #board;
     #currentPlayer;
     #dernierCoup;
@@ -96,54 +96,3 @@ class Puissance4{
         return ensembleCouples
     }
 }
-
-let puissance4 = new Puissance4();
-console.table(puissance4.getBoard());
-puissance4.play(5)
-puissance4.play(5)
-puissance4.play(4)
-puissance4.play(4)
-puissance4.play(3)
-puissance4.play(3)
-puissance4.play(3)
-puissance4.play(3)
-puissance4.play(3)
-puissance4.play(3)
-puissance4.play(4)
-puissance4.play(4)
-puissance4.play(4)
-puissance4.play(5)
-puissance4.play(5)
-puissance4.play(5)
-puissance4.play(5)
-puissance4.play(6)
-puissance4.play(6)
-puissance4.play(6)
-puissance4.play(6)
-puissance4.play(6)
-puissance4.play(6)
-puissance4.play(4)
-puissance4.play(1)
-puissance4.play(2)
-puissance4.play(2)
-puissance4.play(2)
-puissance4.play(2)
-puissance4.play(2)
-puissance4.play(2)
-puissance4.play(1)
-puissance4.play(1)
-puissance4.play(1)
-puissance4.play(1)
-puissance4.play(1)
-puissance4.play(0)
-puissance4.play(0)
-puissance4.play(0)
-puissance4.play(0)
-puissance4.play(0)
-puissance4.play(0)
-
-
-
-console.log(puissance4.isWin());
-
-console.log(puissance4.isDraw());
