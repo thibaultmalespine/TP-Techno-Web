@@ -12,10 +12,10 @@ Array.from(colonnes).forEach((colonne, i) => {
 
 function addJeton(event) {
     let colonne = event.target.parentNode;
-    let board = colonne.parentNode;
-    let index = Array.prototype.indexOf.call(board, colonne);
+    let index = Array.from(colonnes).indexOf(colonne);
     let cases = colonne.children;
-    let y = cases.length-1
+    let y = cases.length-1;
+
     while (cases[y].classList.length > 1) {
         y--;
     }
@@ -30,7 +30,7 @@ function addJeton(event) {
 
     if (p4.isWin()) {
         divInfo.innerHTML = p4.getCurrentPlayer()+" a gagné !";
-
+        removeListener();
     }
     else if (p4.isDraw()) {
         divInfo.innerHTML = "Partie nulle !";
@@ -38,7 +38,6 @@ function addJeton(event) {
     }
     else{
         divInfo.innerHTML = "Tour du Joueur "+p4.getCurrentPlayer();
-        removeListener();
     }
 }
 

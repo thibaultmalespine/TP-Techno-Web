@@ -1,8 +1,10 @@
-const WIDTH = 800;
-const HEIGHT = 600;
+const WIDTH = window.innerWidth;
+const HEIGHT = window.innerHeight;
 const SIZE = 2;
-const SPEED = 1;
+const SPEED = 5;
+const MINSPEED = 2;
 const PARTICLE_COUNT = 0;
+const PARTICLE_CREATE = 100;
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext("2d");
 
@@ -11,20 +13,21 @@ canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
 class Particule{
-    constructor(x, y, dx, dy, color){
+    constructor(x, y, speed, color){
         this.x = x;
         this.y = y;
-        this.dx = dx;
-        this.dy = dy;
+        this.dx = speed[0];
+        this.dy = speed[1];
         this.color = color;
+        this.isOut = false;
     }
     
     update(){
         this.x += this.dx;
         this.y += this.dy;
-        this.x > 800 ? this.dx *= -1 : null
+        this.x > WIDTH ? this.dx *= -1 : null
         this.x < 0 ? this.dx *= -1 : null
-        this.y > 600 ? this.dy *= -1 : null
+        this.y > HEIGHT ? this.dy *= -1 : null
         this.y < 0 ? this.dy *= -1 : null
         
     }
@@ -32,7 +35,7 @@ class Particule{
     draw(ctx){
         ctx.fillStyle =  this.color; 
         ctx.beginPath();
-        ctx.arc(this.x, this.y, SIZE, 0,360);
+        ctx.arc(this.x, this.y, SIZE, 0,2*Math.PI);
         ctx.fill();
     }
     
@@ -42,12 +45,25 @@ function randomColor() {
     return `hsl(${Math.random() * 360}, ${50 + Math.random() * 50}%, ${50 + Math.random() * 50}%)`;
 }
 
-let particules = Array.from({ length : PARTICLE_COUNT}, ()=> new Particule((Math.random()*WIDTH), 
-(Math.random()*HEIGHT), 
-(Math.random()*SPEED)-SPEED/2,
-(Math.random()*SPEED)-SPEED/2,
-randomColor() ));
+function randomSpeed() {
+    let speed = []
+    speed.push((Math.random()*2*SPEED)-SPEED);
+    speed.push((Math.random()*2*SPEED)-SPEED);
+    if (Math.sqrt(Math.pow(speed[0],2) + Math.pow(speed[1],2)) < Math.sqrt(Math.pow(MINSPEED,2) + Math.pow(MINSPEED,2))
+        ||  Math.sqrt(Math.pow(speed[0],2) + Math.pow(speed[1],2)) > Math.sqrt(Math.pow(SPEED,2) + Math.pow(SPEED,2)) ){
+        return randomSpeed();
+    }
+    else{
+        return speed;
+    }
+}
 
+let particules = Array.from({ length : PARTICLE_COUNT}, ()=>
+    new Particule((Math.random()*WIDTH), 
+                (Math.random()*HEIGHT), 
+                randomSpeed(),
+                randomColor())
+);
 function renderParticles() {
     ctx.clearRect(0,0,WIDTH,HEIGHT);
     particules.forEach( particule => {
@@ -64,14 +80,61 @@ canvas.addEventListener("click",(event)=>{
 })
 
 function explode(x,y){
-    for (let i = 0; i < 10; i++) {
-        particules.push(new Particule(x,y,(Math.random()*SPEED)-SPEED/2,(Math.random()*SPEED)-SPEED/2,randomColor()));        
+    for (let i = 0; i < PARTICLE_CREATE; i++) {
+        particules.push(new Particule(x,y,randomSpeed(),randomColor()));        
     }
 }
 
 // ajouter un evenement qui repousse les cercle en fonction de l'endroit ou est la souris
 
-const rayon = 10;
+let radius = 100;
+let mouseCoordX;
+let mouseCoordY;
 canvas.addEventListener('mousemove',(event)=>{
+    mouseCoordX = event.offsetX;
+    mouseCoordY = event.offsetY;
+})
+
+function repulse() {
+
+    particules.forEach(particule => {  
+        let distanceX = mouseCoordX - particule.x;
+        let distanceY = mouseCoordY - particule.y;
+        let distance = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
+        if (distance < radius){
+            if (particule.isOut) {
+                // coeficient directeur de la droite  
+                m = Math.abs(distanceX)/Math.abs(distanceY)
+                // ordonnée à l'origine 
+                b = particule.y - (m * particule.x)
     
+                // angle alpha
+                angle = Math.atan(m)
+    
+                //vitesse initiale
+                vi = Math.sqrt(Math.pow(particule.dx,2)+Math.pow(particule.dy,2));
+                //nouvelle composante 
+                vx = vi * Math.cos(angle);
+                vy = vi * Math.sin(angle);
+                
+                distanceX > 0 ? particule.dx = -vx : particule.dx = vx;
+                distanceY > 0 ? particule.dy = -vy : particule.dy = vy;
+            }
+        }
+        else{
+            particule.isOut = true;
+        }
+    });
+    window.requestAnimationFrame(repulse);
+}
+
+repulse();
+
+
+canvas.addEventListener("wheel",(event)=>{
+        if (event.deltaY > 0){
+            radius > 0 ? radius -= 10 : null;
+        } else {
+            radius += 10;
+        }
 })
