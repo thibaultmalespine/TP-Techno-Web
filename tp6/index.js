@@ -1,13 +1,15 @@
-const WIDTH = window.innerWidth;
-const HEIGHT = window.innerHeight;
-const SIZE = 2;
+let WIDTH = window.innerWidth;
+let HEIGHT = window.innerHeight;
+const SIZE = 1;
 const SPEED = 5;
 const MINSPEED = 2;
 const PARTICLE_COUNT = 0;
 const PARTICLE_CREATE = 100;
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext("2d");
-
+let radius = 0;
+let mouseCoordX;
+let mouseCoordY;
 
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
@@ -87,9 +89,7 @@ function explode(x,y){
 
 // ajouter un evenement qui repousse les cercle en fonction de l'endroit ou est la souris
 
-let radius = 100;
-let mouseCoordX;
-let mouseCoordY;
+
 canvas.addEventListener('mousemove',(event)=>{
     mouseCoordX = event.offsetX;
     mouseCoordY = event.offsetY;
@@ -130,7 +130,7 @@ function repulse() {
 
 repulse();
 
-
+// agrandir ou rétrécir le cercle de répulsion de la souris lorsque l'on utilise la molette
 canvas.addEventListener("wheel",(event)=>{
         if (event.deltaY > 0){
             radius > 0 ? radius -= 10 : null;
@@ -138,3 +138,11 @@ canvas.addEventListener("wheel",(event)=>{
             radius += 10;
         }
 })
+
+// resize le canvas en même temps que la fenêtre
+window.addEventListener('resize', function() {
+    WIDTH = window.innerWidth;
+    HEIGHT = window.innerHeight;
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
+});
