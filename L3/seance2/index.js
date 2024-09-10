@@ -27,6 +27,15 @@ app.get('/readfile', (req, res) => {
     });
 });
 
+app.get('/download', (req, res)=>{
+    res.download('./data.txt')
+    
+})
+
+app.get('/accueil', (req,res)=>{
+    res.sendFile("/home/tmalespi/TP-Techno-Web/L3/seance2/index.html")
+})
+
 // Démarrez le serveur pour qu'il écoute sur le port défini (à compléter)
 app.listen(PORT, () => { // Complétez avec le port sur lequel votre serveur va écouter
     console.log(`Serveur démarré sur le port ${PORT}`);
