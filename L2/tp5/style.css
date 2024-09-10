@@ -1,0 +1,31 @@
+body{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#board {
+    display: flex;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
+.case {
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+}
+
+.case.player-A {
+    background: radial-gradient(circle, #ff0000, #990000);
+}
+.case.player-B {
+    background: radial-gradient(circle, #ffff00, #999900);
+}
