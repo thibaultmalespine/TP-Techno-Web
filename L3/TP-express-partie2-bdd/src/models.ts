@@ -56,6 +56,7 @@ type Commande = {
   address: String;
   phone: String;
   menuId: String;
+  menuName: String;
 };
 
 export async function createCommande(
@@ -68,16 +69,33 @@ export async function createCommande(
     "INSERT INTO orders(name, address, phone, menu_id) VALUES(?,?,?,?)",
     [name, address, phone, menuId],
   );
-  console.log(queryResult);
 
   //@ts-ignore
   return queryResult[0].insertId;
 }
 
 export async function getAllCommandes(): Promise<Array<Commande>> {
-  const queryResult = await db.execute("SELECT * FROM orders");
+  const queryResult = await db.execute(
+    "SELECT orders.*, menus.name as menu_name FROM orders, menus WHERE menu_id = menus.id",
+  );
 
   return queryResult[0] as Array<Commande>;
+}
+
+export async function getCommandesByMenuId(
+  id: String,
+): Promise<Array<Commande>> {
+  const queryResult = await db.execute(
+    "SELECT orders.*, menus.name as menu_name FROM orders, menus WHERE menu_id = menus.id AND menus.id = ?",
+    [id],
+  );
+  return queryResult[0] as Array<Commande>;
+}
+
+export async function deleteCommandeWithId(id: String): Promise<boolean> {
+  const queryResult = await db.execute("DELETE FROM orders WHERE id = ?", [id]);
+
+  return queryResult[0] !== undefined;
 }
 /**
  * ----

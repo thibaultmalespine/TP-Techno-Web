@@ -1,11 +1,18 @@
 <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Menus</h1>
 <p> Historique des commandes : </p>
-<div class="row row-cols-1 row-cols-md-3 g-4">
-{{#each commandes}}
-  <ul>
-    <li>numéro commande : {{id}}</li>
-    <li>nom : {{name}}</li>
-    <li>téléphone : {{phone}}</li>
-    <li>menu : {{menu_id}}</li>
-  </ul>
-{{/each}}
+<div class="row row-cols-1 row-cols-md-1 g-4 w-50">
+
+  {{#each commandes}}
+    <div class="card">
+      <p class="card-title card-header fs-4">numéro commande : {{id}}</p>
+      <li>nom : {{name}}</li>
+      <li>téléphone : {{phone}}</li>
+      <li>menu : {{menu_name}}</li>
+      <div>
+        <a href="/commandes?menu={{menu_id}}">Voir toutes les commandes de
+          {{menu_name}}</a>
+      </div>
+      <a href="/commandes/{{id}}" class="btn btn-danger">Supprimer la commande</a>
+    </div>
+  {{/each}}
+</div>

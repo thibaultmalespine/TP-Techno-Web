@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import {
   createCommande,
   getAllCommandes,
+  getCommandesByMenuId,
   getAllMenus,
   getMenuById,
   getRestaurant,
+  deleteCommandeWithId,
 } from "./models";
 
 function getHomePage(req: Request, res: Response) {
@@ -57,6 +59,19 @@ async function createCommandeFromFormulaire(req: Request, res: Response) {
 }
 
 async function getCommandesPage(req: Request, res: Response) {
+  const commandes =
+    req.query.menu === undefined
+      ? await getAllCommandes()
+      : await getCommandesByMenuId(req.query.menu as String);
+
+  res.render("commandes", {
+    commandes,
+  });
+}
+
+async function deleteCommande(req: Request, res: Response) {
+  const id = req.params.id;
+  await deleteCommandeWithId(id);
   const commandes = await getAllCommandes();
   res.render("commandes", {
     commandes,
@@ -69,4 +84,5 @@ export {
   getCommanderPage,
   createCommandeFromFormulaire,
   getCommandesPage,
+  deleteCommande,
 };
