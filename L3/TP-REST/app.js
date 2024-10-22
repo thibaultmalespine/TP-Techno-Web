@@ -10,19 +10,36 @@ async function main(){
         const movies = await getMovies(input.value);
         renderMovies(movies);
     })
-console.log(await getLibraryMovie(4));
+
 }
 
 async function getMovies(query){
     const response = await fetch(`/movies?query=${query}`);
     const movies = await response.json();
+
+    const librairies = await Promise.all(movies.map(movie => {
+        return getLibraryMovie(movie.id);
+    }))
+
+    for (let index = 0; index < librairies.length; index++) {
+        const library = librairies[index];
+        const movie = movies[index];
+        if (library != false) {
+            movie["isInLibrary"] = true;
+            movie["rating"] = library.rating;
+        }      
+        else {
+            movie["isInLibrary"] = false;
+        }
+    }
+
     return movies;
 }
 function renderMovies(movies) {
     const container = document.querySelector('div[data-movies]');
     container.innerHTML = "";
     movies.forEach(movie => {
-        const movieCard = createMovieCard({movie});
+        const movieCard = createMovieCard({movie, onAddToLibrary : addMovieToLibrary, onRemoveFromLibrary : removeFromLibrary});
         container.appendChild(movieCard);
     });
 }
@@ -36,5 +53,26 @@ async function getLibraryMovie(movieId){
         return false;
     }
 }   
+
+async function addMovieToLibrary(movieId){
+    await fetch("/library",{
+        method: "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+            LibraryMovie : {movieId : movieId}
+        })
+    })
+}
+
+async function removeFromLibrary(movieId){
+    await fetch(`/library/${movieId}`, {
+        method: "DELETE",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+    })
+}
 
 main();
