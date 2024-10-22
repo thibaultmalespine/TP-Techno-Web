@@ -39,7 +39,7 @@ function renderMovies(movies) {
     const container = document.querySelector('div[data-movies]');
     container.innerHTML = "";
     movies.forEach(movie => {
-        const movieCard = createMovieCard({movie, onAddToLibrary : addMovieToLibrary, onRemoveFromLibrary : removeFromLibrary});
+        const movieCard = createMovieCard({movie, onAddToLibrary : addMovieToLibrary, onRemoveFromLibrary : removeFromLibrary, onRatingChange : updateRating});
         container.appendChild(movieCard);
     });
 }
@@ -72,6 +72,18 @@ async function removeFromLibrary(movieId){
         headers : {
             "Content-Type" : "application/json"
         },
+    })
+}
+
+async function updateRating(movieId, rating){
+    await fetch(`/library/${movieId}`,{
+        method:"PUT",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+            rating : rating
+        })
     })
 }
 

@@ -1,5 +1,5 @@
 import express from "express";
-import { addMovieToLibrary, getLibraryMovieById, modifyLibraryMovie, removeMovieFromLibrary } from "../models/library";
+import { addMovieToLibrary, getLibraryMovieById, getLibraryMovies, modifyLibraryMovie, removeMovieFromLibrary } from "../models/library";
 
 const router = express.Router();
 
@@ -13,6 +13,16 @@ router.get("/library/:movieId",async (req,res) => {
         res.sendStatus(404);
     }
 });
+
+router.get("/library", async (req,res) => {
+    try {
+        const movies = await getLibraryMovies();
+        res.json(movies);
+    } catch (error) {
+        res.sendStatus(500);
+    }
+
+})
 
 router.post("/library", async (req, res)=>{
     const LibraryMovie = req.body.LibraryMovie;
@@ -37,11 +47,12 @@ router.delete("/library/:movieId", async (req, res)=>{
 
 router.put("/library/:movieId", async (req, res)=>{
     const id = req.params.movieId;
-    const LibraryMovie = await getLibraryMovieById(id);
-
+    const rating : number = req.body.rating;
+    const LibraryMovie = {movieId : id, rating};
     try {
-        await modifyLibraryMovie(id, LibraryMovie)
-        res.end("Note du film modifiée")
+        await getLibraryMovieById(id);
+        await modifyLibraryMovie(id, LibraryMovie);
+        res.end("Note du film modifiée");
     } catch (error) {
         res.sendStatus(404);
     }
